@@ -1,0 +1,55 @@
+*{
+  /* fonts */
+  box-sizing: border-box;
+}
+
+body{
+  margin: 0;
+  background-color: rgb(158, 158, 158);
+}
+
+#stats-container{
+  display: flex;
+  justify-content: space-evenly;
+  max-height: 10vh;
+}
+
+#grid-container{
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#grid{
+  display: flex;
+  flex-wrap: wrap;
+  height: 700px;
+  width: 700px;
+}
+
+.gridPlace{
+  border: solid 1px rgb(0, 0, 0);
+}
+
+#difficulty-container{
+  display: flex;
+  justify-content: space-evenly;
+  width: 100vw;
+  height: 10vh;
+  align-items: center;
+}
+
+/* Functions to change the appearance for the player during the game */
+
+.clicked{
+
+}
+
+.mine{
+  
+}
+
+.flag{
+
+}
