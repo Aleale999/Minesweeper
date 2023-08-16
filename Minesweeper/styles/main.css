@@ -30,6 +30,8 @@ body{
 
 .gridPlace{
   border: solid 1px rgb(0, 0, 0);
+  background-color: grey;
+  box-shadow: 0 0 0 2px rgb(0, 0, 0);
 }
 
 #difficulty-container{
@@ -40,16 +42,29 @@ body{
   align-items: center;
 }
 
+button{
+  padding: 10px 5%;
+  border-radius: 5px;
+}
+
 /* Functions to change the appearance for the player during the game */
 
 .clicked{
-
+  background-color: green;
 }
 
 .mine{
-  
+  background-color: red;
 }
 
 .flag{
 
+}
+
+.victory{
+  /* Append to the body (so it can cover part of everything) an image that shows victory ending display */
+}
+
+.lose{
+  /* Append to the body (so it can cover part of everything) an image that shows losing ending display */
 }

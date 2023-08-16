@@ -1,7 +1,7 @@
 // START
 
-// Create grid
-// Or make the player choose first and then generate them
+// Create grid DONE
+// Make the player choose first and then generate .mine
 
 // Add event listener for every click of the player on the grid, check if it is right or left click
 
@@ -37,15 +37,23 @@
 // Elements
 
 let grid = document.getElementById("grid")
-const btns = document.getElementById("difficulty-container")
-
+let buttons = document.querySelectorAll(".button")
+let minesLeft = document.getElementById("mines-left")
 
 // Variables
 
 let width
-let gridDim
+let gridDim = 0
 let mines
-const board = []
+let board = []
+let random
+let clicked
+let firstClick
+let timer = 0
+let timePassed
+let click
+let cellsMissing
+let cellMineCounter = 0
 
 //Executions
 
@@ -53,15 +61,80 @@ const board = []
 // so for each mine i place i will need at least 6.25 blocks, so with a grid of 16*16 should have 40 mines? 
 
 
-function checkDifficulty(){
-  //Function changes the width and the number of mines.
+function startGame(event){
+
+  timer = 0
+  
+  document.getElementById("time").innerHTML = timer
+
+  const difficulty = parseInt(event.target.value)
+
+  clearInterval(timePassed)
+
+  checkDifficulty(difficulty)
+
+  generateGrid()
+  
+  click.forEach((cell) => {
+    cell.addEventListener("click", cellClick)
+  })
+}
+
+function cellClick(event){
+  if(!clicked){
+    firstClicked(event)
+    clicked = true
+    cellsMissing--
+    mineCounter()
+    timePassed = setInterval(function () {
+      timer++
+      document.getElementById("time").innerHTML = timer
+    },1000)
+    
+  } else {
+    if(!event.currentTarget.classList.contains("clicked")){
+      event.currentTarget.classList.add("clicked")
+      cellsMissing--
+      mineCounter()
+    }
+    if(event.target.classList.contains("mine")){
+      defeatScreen()
+    } else if(cellsMissing === 0){
+      winScreen()
+    }
+  }
 }
 
 
+function checkDifficulty(difficulty){
+  random = []
+  //Function changes the width and the number of mines.
+  switch(difficulty){
+    case 1:
+      width = 9
+      mines = 10
+      document.getElementById("difficulty").innerHTML = "Easy"
+      break;
+    case 2:
+      width = 16
+      mines = 40
+      document.getElementById("difficulty").innerHTML = "Normal"
+      break;
+    case 3:
+      width = 22
+      mines = 100
+      document.getElementById("difficulty").innerHTML = "Hard"
+      break;
+  }
+  gridDim = width**2
+  cellsMissing = gridDim - mines
+}
+      
 function generateGrid(){
-
+  document.querySelectorAll(".gridPlace").forEach(cell => cell.remove());
+  board = []
+  clicked = false
   for(let i = 0 ; i < gridDim ; i++){
-
     const gridPlace = document.createElement("DIV")
     gridPlace.classList.add("gridPlace")
     gridPlace.style.width = `${100 / width}%`
@@ -69,9 +142,109 @@ function generateGrid(){
     grid.append(gridPlace)
     board.push(gridPlace)
   }
+  click = document.querySelectorAll(".gridPlace")
 }
 
-//Events
+function generateRandomMine(){
+  for(let j = 0; j < mines; j++){
+    random.push(Math.floor(Math.random()*gridDim))
+    for(let i = 0 ; i < random.length - 1 ; i++){
+      if(random[j] === random[i] || random[j] === random[i] - 1 || random[j] === random[i] + 1 || random[j] === random[i] - width || random[j] === random[i] + width || board[random[j]].classList.contains("clicked")){
+        random.pop()
+        j = j - 1
+      }
+    }
+  }
+  random.forEach(num => board[num].classList.add("mine"))
+  minesLeft.innerHTML = mines
+}
+  
+function firstClicked(event){
+  //First click
+  click.forEach(cell => cell.addEventListener("click", cellClick))
+  event.currentTarget.classList.add("clicked")
+  //Then generate mines
+  generateRandomMine()
+ 
+}
 
+function mineCounter(){
+  let k=0
+  board.forEach((cell,i) => {
+    cellMineCounter = 0
+    if(cell.classList.contains("clicked")){
+      if(i !== 10 * k){
+        if(board[i - 1].classList.contains("mine"))
+        {
+          cellMineCounter++
+          console.log(board[i - 1])
+        }
+      }
+      if(i !== width * k * 10 - 1){
+        if(board[i + 1].classList.contains("mine"))
+        {
+          cellMineCounter++
+          console.log(board[i + 1])
+        }
+      }
+      if(i > width){
+        if(board[i - width].classList.contains("mine")){
+          cellMineCounter++
+          console.log(board[i - width])
+        }
+        if(i !== width * 10 * i){
+          if(board[i - width - 1].classList.contains("mine")){
+            cellMineCounter++
+            console.log(board[i - width - 1])
+          }
+        }
+        if(i !== width * 10 * k){
+          if(board[i - width + 1].classList.contains("mine")){
+            cellMineCounter++
+            console.log(board[i - width + 1])
+          }
+        }
+      }
+      if(i < gridDim - width){
+        if(board[i + width].classList.contains("mine")){
+          cellMineCounter++
+          console.log(board[i + width])
+        }
+        if(i !== width * 10 * k){
+          if(board[i + width - 1].classList.contains("mine")){
+            cellMineCounter++
+            console.log(board[i + width - 1])
+          }
+        }
+        if(i !== width * 10 * k){
+          if(board[i + width + 1].classList.contains("mine")){
+            cellMineCounter++
+            console.log(board[i + width + 1])
+          }
+        }
+      }
+      
+      k++
+    }
+    if(cellMineCounter !== 0){
+      board[i].innerHTML = cellMineCounter
+    }
+    
+  })
+  console.log(k)
+}
+
+function defeatScreen(){
+  console.log("Lost")
+}
+
+function winScreen(){
+  console.log("Won")
+}
+  
+
+//Events
+  
 // Event listener that checks the diff button.
-btns.addEventListener("click",checkDifficulty)
+buttons.forEach(button => button.addEventListener('click', startGame))
+
