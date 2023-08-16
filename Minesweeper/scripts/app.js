@@ -39,6 +39,7 @@
 let grid = document.getElementById("grid")
 let buttons = document.querySelectorAll(".button")
 let minesLeft = document.getElementById("mines-left")
+let difficulty
 
 // Variables
 
@@ -67,7 +68,9 @@ function startGame(event){
   
   document.getElementById("time").innerHTML = timer
 
-  const difficulty = parseInt(event.target.value)
+  if(!clicked){
+    difficulty = parseInt(event.target.value)
+  }
 
   clearInterval(timePassed)
 
@@ -98,7 +101,7 @@ function cellClick(event){
       mineCounter()
     }
     if(event.target.classList.contains("mine")){
-      defeatScreen()
+      defeatScreen()    
     } else if(cellsMissing === 0){
       winScreen()
     }
@@ -169,77 +172,74 @@ function firstClicked(event){
 }
 
 function mineCounter(){
-  let k=0
   board.forEach((cell,i) => {
     cellMineCounter = 0
     if(cell.classList.contains("clicked")){
-      if(i !== 10 * k){
+      if(i%width !== 0){
         if(board[i - 1].classList.contains("mine"))
         {
           cellMineCounter++
-          console.log(board[i - 1])
+          
         }
       }
-      if(i !== width * k * 10 - 1){
-        if(board[i + 1].classList.contains("mine"))
+      if(i%(width) !== width - 1){
+        if(board[i + 1]?.classList.contains("mine"))
         {
           cellMineCounter++
-          console.log(board[i + 1])
+          
         }
       }
-      if(i > width){
+      if(i > width - 1){
         if(board[i - width].classList.contains("mine")){
           cellMineCounter++
-          console.log(board[i - width])
+          
         }
-        if(i !== width * 10 * i){
+        if(i%width !== 0){
           if(board[i - width - 1].classList.contains("mine")){
             cellMineCounter++
-            console.log(board[i - width - 1])
+            
           }
         }
-        if(i !== width * 10 * k){
+        if(i%(width) !== width - 1){
           if(board[i - width + 1].classList.contains("mine")){
             cellMineCounter++
-            console.log(board[i - width + 1])
+            
           }
         }
       }
       if(i < gridDim - width){
         if(board[i + width].classList.contains("mine")){
           cellMineCounter++
-          console.log(board[i + width])
+          
         }
-        if(i !== width * 10 * k){
+        if(i%width !== 0){
           if(board[i + width - 1].classList.contains("mine")){
             cellMineCounter++
-            console.log(board[i + width - 1])
+            
           }
         }
-        if(i !== width * 10 * k){
-          if(board[i + width + 1].classList.contains("mine")){
+        if(i%(width) !== width - 1){
+          if(board[i + width + 1]?.classList.contains("mine")){
             cellMineCounter++
-            console.log(board[i + width + 1])
           }
+          
         }
       }
-      
-      k++
     }
     if(cellMineCounter !== 0){
       board[i].innerHTML = cellMineCounter
     }
-    
   })
-  console.log(k)
 }
 
 function defeatScreen(){
-  console.log("Lost")
+  difficulty--
+  startGame()
 }
 
 function winScreen(){
-  console.log("Won")
+  difficulty++
+  startGame()
 }
   
 
