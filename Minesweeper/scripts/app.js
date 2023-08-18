@@ -40,6 +40,8 @@ let grid = document.getElementById("grid")
 let buttons = document.querySelectorAll(".button")
 let minesLeft = document.getElementById("mines-left")
 let difficulty
+let body = document.querySelector("body")
+let endScreen = document.getElementById("grid-container")
 
 // Variables
 
@@ -55,6 +57,9 @@ let timePassed
 let click
 let cellsMissing
 let cellMineCounter = 0
+let endTimer = 0
+let checker = [1, -1, width, -width , - width + 1, - width - 1 , width + 1, width - 1]
+let alive = true
 
 //Executions
 
@@ -65,13 +70,29 @@ let cellMineCounter = 0
 function startGame(event){
 
   timer = 0
+
+  alive = true
+
+  clearInterval(endTimer)
+
+  if(grid.classList.contains("easy")){
+    grid.classList.remove("easy")
+  }
+  if(grid.classList.contains("medium")){
+    grid.classList.remove("medium")
+  }
+  if(grid.classList.contains("hard")){
+    grid.classList.remove("hard")
+  }
   
+  endScreen.classList.remove("lost","victory")
+
   document.getElementById("time").innerHTML = timer
 
-  if(!clicked){
+  // if(!clicked){
     difficulty = parseInt(event.target.value)
-  }
-
+  
+  
   clearInterval(timePassed)
 
   checkDifficulty(difficulty)
@@ -88,22 +109,19 @@ function cellClick(event){
     firstClicked(event)
     clicked = true
     cellsMissing--
-    mineCounter()
+    event.target.classList.remove("hide")
+
+    mineCounter(event.currentTarget)
     timePassed = setInterval(function () {
       timer++
       document.getElementById("time").innerHTML = timer
     },1000)
     
   } else {
-    if(!event.currentTarget.classList.contains("clicked")){
+    if(!event.currentTarget.classList.contains("clicked") && alive){
       event.currentTarget.classList.add("clicked")
       cellsMissing--
-      mineCounter()
-    }
-    if(event.target.classList.contains("mine")){
-      defeatScreen()    
-    } else if(cellsMissing === 0){
-      winScreen()
+      mineCounter(event.currentTarget)
     }
   }
 }
@@ -111,22 +129,29 @@ function cellClick(event){
 
 function checkDifficulty(difficulty){
   random = []
+  width = 0
   //Function changes the width and the number of mines.
   switch(difficulty){
     case 1:
       width = 9
       mines = 10
       document.getElementById("difficulty").innerHTML = "Easy"
+      grid.classList.add("easy")
+      document.querySelector("body").style.backgroundImage = "linear-gradient(#8bd4cf ,#195ac7)"
       break;
     case 2:
       width = 16
       mines = 40
       document.getElementById("difficulty").innerHTML = "Normal"
+      document.querySelector("body").style.backgroundImage = "linear-gradient(#d5e1a7,#e5acac)"
+      grid.classList.add("medium")
       break;
     case 3:
       width = 22
       mines = 100
       document.getElementById("difficulty").innerHTML = "Hard"
+      document.querySelector("body").style.backgroundImage = "linear-gradient(#bb9f0c ,#3b0505)"
+      grid.classList.add("hard")
       break;
   }
   gridDim = width**2
@@ -140,6 +165,7 @@ function generateGrid(){
   for(let i = 0 ; i < gridDim ; i++){
     const gridPlace = document.createElement("DIV")
     gridPlace.classList.add("gridPlace")
+    gridPlace.classList.add("hide")
     gridPlace.style.width = `${100 / width}%`
     gridPlace.style.height = `${100 / width}%`
     grid.append(gridPlace)
@@ -149,7 +175,7 @@ function generateGrid(){
 }
 
 function generateRandomMine(){
-  for(let j = 0; j < mines; j++){
+  for(let j = 0; j < mines; j++){ // This is to choose the cells for the mines, it removes all adjacent mines and it (most of the times) it makes it so that the first cell clicked wont have the mine
     random.push(Math.floor(Math.random()*gridDim))
     for(let i = 0 ; i < random.length - 1 ; i++){
       if(random[j] === random[i] || random[j] === random[i] - 1 || random[j] === random[i] + 1 || random[j] === random[i] - width || random[j] === random[i] + width || board[random[j]].classList.contains("clicked")){
@@ -161,90 +187,141 @@ function generateRandomMine(){
   random.forEach(num => board[num].classList.add("mine"))
   minesLeft.innerHTML = mines
 }
-  
+
 function firstClicked(event){
   //First click
   click.forEach(cell => cell.addEventListener("click", cellClick))
   event.currentTarget.classList.add("clicked")
   //Then generate mines
   generateRandomMine()
- 
 }
 
-function mineCounter(){
+
+function mineCounter(currentTarget){
   board.forEach((cell,i) => {
+    if(board[i] === currentTarget){
+      cellMineCounter = 0
+      checker = [1, -1, width, -width , - width + 1, - width - 1 , width + 1, width - 1]
+      if(i % width === 0){
+        checker.splice(1, 1)
+        checker.splice(4, 1)
+        checker.splice(5, 1)
+      }
+      if(i % width === width - 1){
+        checker.splice(0, 1)
+        checker.splice(3, 1)
+        checker.splice(4, 1)
+      }
+      if(i <= width && i !== 0){
+        checker.splice(3, 3)
+      }
+      if(i > gridDim - width && i !==gridDim - width){
+        checker.splice(2, 1)
+        checker.splice(5, 2)
+      }
+      if(i === 0){
+        checker = [1 , width, width + 1]
+      }
+      if(i === width - 1){
+        checker = [-1 , width, width - 1]
+      }
+      if(i === gridDim - width){
+        checker = [1 , -width, -width + 1]
+      }
+      if(i === gridDim - 1){
+        checker = [-1 , -width, -width - 1]
+      }
+      
+      mineCounterChecker(i)
+      }
+      finisherChecker(i)
+    })
+  }
+
+  
+  function mineCounterChecker(i){
     cellMineCounter = 0
-    if(cell.classList.contains("clicked")){
-      if(i%width !== 0){
-        if(board[i - 1].classList.contains("mine"))
-        {
-          cellMineCounter++
-          
-        }
-      }
-      if(i%(width) !== width - 1){
-        if(board[i + 1]?.classList.contains("mine"))
-        {
-          cellMineCounter++
-          
-        }
-      }
-      if(i > width - 1){
-        if(board[i - width].classList.contains("mine")){
-          cellMineCounter++
-          
-        }
-        if(i%width !== 0){
-          if(board[i - width - 1].classList.contains("mine")){
-            cellMineCounter++
-            
-          }
-        }
-        if(i%(width) !== width - 1){
-          if(board[i - width + 1].classList.contains("mine")){
-            cellMineCounter++
-            
-          }
-        }
-      }
-      if(i < gridDim - width){
-        if(board[i + width].classList.contains("mine")){
-          cellMineCounter++
-          
-        }
-        if(i%width !== 0){
-          if(board[i + width - 1].classList.contains("mine")){
-            cellMineCounter++
-            
-          }
-        }
-        if(i%(width) !== width - 1){
-          if(board[i + width + 1]?.classList.contains("mine")){
-            cellMineCounter++
-          }
-          
-        }
+    for(let j = 0 ; j < checker.length ; j++){
+      let cellAdjacent = board[i + checker[j]]
+      if(cellAdjacent.classList.contains("mine")){
+        cellMineCounter++
       }
     }
-    if(cellMineCounter !== 0){
+    if(!board[i].classList.contains("mine")){
       board[i].innerHTML = cellMineCounter
     }
-  })
-}
+  }
 
+  function notWorking(k){
+    for( let n = 0 ; n < 4 ; n++){
+      if(!board[k].classList.contains("mine")){
+        console.log(k)
+        if(n === 0){
+          if(!board[k].innerHTML && k !== width - 1) {board[k].classList.add("clicked")}
+        }
+        if(n === 1){
+          k = k + width
+          if(!board[k].innerHTML && k < gridDim - width) {board[k].classList.add("clicked")}
+        }
+        if(n === 2){
+          k = k - 1
+          if(!board[k].innerHTML && k !== gridDim - 1) {board[k].classList.add("clicked")}
+        }
+        if(n === 3){
+          k = k - width
+          if(!board[k].innerHTML && k > width - 1) {board[k].classList.add("clicked")}
+        }
+      }
+    }
+  }
+
+  function finisherChecker(i){
+    for(let j = 0 ; j < random.length ; j++)
+        {if(i === random[j] && board[i].classList.contains("clicked")){
+          alive = false
+          board.forEach(cell => {
+            if(cell.classList.contains("mine")){
+              if(difficulty === 3){
+                cell.classList.add("revealHardMine")
+                document.getElementById("difficulty").innerHTML = "You lost! Cerberus caught you!"
+                // cell.classList.remove("hideMine")
+              }
+              if(difficulty === 2){
+                cell.classList.add("revealEasyMine")
+                document.getElementById("difficulty").innerHTML = "You lost! An angel caught you!"
+                // cell.classList.remove("hideMine")
+              }
+              if(difficulty === 1){
+                cell.classList.add("revealEasyMine")
+                document.getElementById("difficulty").innerHTML = "You lost! An angel caught you!"
+                // cell.classList.remove("hideMine")
+              }
+            }
+          })
+          endScreen.classList.add("lost")
+          // setTimeout(() =>defeatScreen(), "3000")
+        } else {
+          for(let k = 0 ; k < gridDim ; k++){
+            if(cellsMissing === 0){
+              document.getElementById("difficulty").innerHTML = "You won! Congrats!"
+              endScreen.classList.add("victory")
+              // endTimer = setTimeout(() => winScreen(),"3000")
+            }
+          }
+        }}
+  }
+  
 function defeatScreen(){
-  difficulty--
-  startGame()
+  startGame(click)
 }
 
 function winScreen(){
-  difficulty++
-  startGame()
+  startGame(click)
 }
-  
+
 
 //Events
-  
+
 // Event listener that checks the diff button.
 buttons.forEach(button => button.addEventListener('click', startGame))
 

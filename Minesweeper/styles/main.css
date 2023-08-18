@@ -5,7 +5,8 @@
 
 body{
   margin: 0;
-  background-color: rgb(158, 158, 158);
+  background-color: rgb(43, 43, 43);
+  height: 100%;
 }
 
 #stats-container{
@@ -15,10 +16,17 @@ body{
 }
 
 #grid-container{
-  min-height: 80vh;
+  min-height: 73.4vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+div{
+  height: 100%;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  font-size: 30px;
 }
 
 #grid{
@@ -30,8 +38,13 @@ body{
 
 .gridPlace{
   border: solid 1px rgb(0, 0, 0);
-  background-color: grey;
+  /* background-color: grey; */
   box-shadow: 0 0 0 2px rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 200%;
+  font-weight: bold;
 }
 
 #difficulty-container{
@@ -47,24 +60,71 @@ button{
   border-radius: 5px;
 }
 
+#title{
+  max-width: 100%;
+  text-align: center;
+  color: red;
+  max-height: 10vh;
+}
+
 /* Functions to change the appearance for the player during the game */
 
+.easy{
+  background-image: url(../images/Easy.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.medium{
+  background-image: url(../images/Medium.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.hard{
+  background-image: url(../images/Hard.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.hide{
+  background-color: transparent;
+  color: transparent;
+  user-select: none;
+}
+
 .clicked{
-  background-color: green;
+  background: linear-gradient(aqua, 0px,transparent,100%);
+  color: black
+}
+
+.revealHardMine{
+  background-image: url(../images/HardMine.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.revealEasyMine{
+  background-image: url(../images/EasyMine.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 
 .mine{
-  background-color: red;
-}
-
-.flag{
-
+  
 }
 
 .victory{
   /* Append to the body (so it can cover part of everything) an image that shows victory ending display */
+  
 }
 
-.lose{
+.lost{
   /* Append to the body (so it can cover part of everything) an image that shows losing ending display */
+  
 }
