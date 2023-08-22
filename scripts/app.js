@@ -1,40 +1,4 @@
-// START
 
-// Create grid DONE
-// Make the player choose first and then generate .mine
-
-// Add event listener for every click of the player on the grid, check if it is right or left click
-
-// For each left click, check:
-// 1. The click was not on a .mine cell => if yes, Losing condition
-// 2. The amount of mines in the nearby cells => if the nearby cells had no mines then check every tile around them (recurse function for each cell with no .mine nearby,
-//    stop only when every cell around the clicked area has at least 1 mine in the vicinity)
-// 3. Add .clicked to every cell clicked or checked that has no .mine nearby. To show the player the tiles he has already checked
-// 4. Count the number of .mine on each .clicked cell and display the number on screen
-
-// For each right click:
-// 1. Add .flag on the clicked tile => make the tile unavailable to be clicked?
-// 2. Remove 1 mine from the mine counter in the header (stop at 0)
-
-
-//WINNING
-// No more tiles without .mine left, (check if every tile except .mine has .checked) => CSS selectors
-// Display winning screen
-// Reset the minefield and set a higher difficulty (if possible)
-
-//LOSING
-// Whenever a mine is clicked:
-// Display losing screen.
-// Reset the minefield and set a lower difficulty (if possible)
-// Display every mine
-
-
-// RESETTING THE MINEFIELD
-// Call function that deletes all .mine from every tile
-// Call function that deletes all .clicked and .flag
-// Call function to create new random number
-
-// Elements
 
 let grid = document.getElementById("grid")
 let buttons = document.querySelectorAll(".button")
@@ -63,9 +27,6 @@ let alive = true
 
 //Executions
 
-// Generate a grid of the chosen dimensions and calculate the amount of mines necessary => the average of mines/block should be around 0.16 on normal diff,
-// so for each mine i place i will need at least 6.25 blocks, so with a grid of 16*16 should have 40 mines? 
-
 
 function startGame(event){
 
@@ -89,8 +50,7 @@ function startGame(event){
 
   document.getElementById("time").innerHTML = timer
 
-  // if(!clicked){
-    difficulty = parseInt(event.target.value)
+  difficulty = parseInt(event.target.value)
   
   
   clearInterval(timePassed)
@@ -188,7 +148,7 @@ function generateRandomMine(){
   minesLeft.innerHTML = mines
 }
 
-function firstClicked(event){
+function firstClicked(event){ // Function makes the user pick a cell and then generates the mines, to avoid a click on the mine on the first click
   //First click
   click.forEach(cell => cell.addEventListener("click", cellClick))
   event.currentTarget.classList.add("clicked")
@@ -197,7 +157,7 @@ function firstClicked(event){
 }
 
 
-function mineCounter(currentTarget){
+function mineCounter(currentTarget){ // function to count each mine around a clicked cell. This also checks that the cell isnt near a border or a corner
   board.forEach((cell,i) => {
     if(board[i] === currentTarget){
       cellMineCounter = 0
@@ -252,30 +212,30 @@ function mineCounter(currentTarget){
     }
   }
 
-  function notWorking(k){
-    for( let n = 0 ; n < 4 ; n++){
-      if(!board[k].classList.contains("mine")){
-        console.log(k)
-        if(n === 0){
-          if(!board[k].innerHTML && k !== width - 1) {board[k].classList.add("clicked")}
-        }
-        if(n === 1){
-          k = k + width
-          if(!board[k].innerHTML && k < gridDim - width) {board[k].classList.add("clicked")}
-        }
-        if(n === 2){
-          k = k - 1
-          if(!board[k].innerHTML && k !== gridDim - 1) {board[k].classList.add("clicked")}
-        }
-        if(n === 3){
-          k = k - width
-          if(!board[k].innerHTML && k > width - 1) {board[k].classList.add("clicked")}
-        }
-      }
-    }
-  }
+  // function notWorking(k){
+  //   for( let n = 0 ; n < 4 ; n++){
+  //     if(!board[k].classList.contains("mine")){
+  //       console.log(k)
+  //       if(n === 0){
+  //         if(!board[k].innerHTML && k !== width - 1) {board[k].classList.add("clicked")}
+  //       }
+  //       if(n === 1){
+  //         k = k + width
+  //         if(!board[k].innerHTML && k < gridDim - width) {board[k].classList.add("clicked")}
+  //       }
+  //       if(n === 2){
+  //         k = k - 1
+  //         if(!board[k].innerHTML && k !== gridDim - 1) {board[k].classList.add("clicked")}
+  //       }
+  //       if(n === 3){
+  //         k = k - width
+  //         if(!board[k].innerHTML && k > width - 1) {board[k].classList.add("clicked")}
+  //       }
+  //     }
+  //   }
+  // }
 
-  function finisherChecker(i){
+  function finisherChecker(i){ // This function checks that the game is not over, and if it is then checks the condition met
     for(let j = 0 ; j < random.length ; j++)
         {if(i === random[j] && board[i].classList.contains("clicked")){
           alive = false
