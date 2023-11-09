@@ -1,10 +1,10 @@
 Divine Minesweeper - or under my teacher's suggestion DivineSweeper
 
-The title gives it away immediatly, this is an interpretation of Minesweeper.
+The title gives it away immediately, this is an interpretation of Minesweeper.
 
-Probably everyone has heard of this game, maybe you saw this while looking around your machine for a way to waste some (paid) time at work or just beat your friends' time in school, but if you haven't, here is a simple explaination of how the game works:
-- The game starts with a grid of covered tiles. This is the mine field you have to clear, so be careful where you click.
-- Once you clicked you may see a number appear on the cleared tile, this number indicates how many mines there are around this cell.
+Probably everyone has heard of this game, maybe you saw this while looking around your machine for a way to waste some (paid) time at work or just beat your friends' time in school, but if you haven't, here is a simple explanation of how the game works:
+- The game starts with a grid of covered tiles. This is the minefield you have to clear, so be careful where you click.
+- Once you click you may see a number appear on the cleared tile, this number indicates how many mines there are around this cell.
 - The goal of the game, if it wasn't clear yet, is to click on every single empty cell, leaving only the mines covered.
 - If you are successful then the game ends and you may pass to a more difficult level, with more tiles and more mines.
 - If you click on a mine you lose.
@@ -13,10 +13,12 @@ This was my very first program I wrote. It is in no way efficient nor complete, 
 
 This game was the first project given to me (and also to every other student in the course) in the coding bootcamp I am currently enrolled in, GeneralAssembly.
 
-The very weird (or you may say interesting if you want to be more polite) theme I chose is simply my experience with coding, it is all ups and downs. You start a program, get to the first wall, hit your head against it quite a few times until you finally realise how to solve the issue or find a way to work around the problem. So it came to me one day, this is like Dante's journey through hell, purgatory and heaven, because I am pretty sure the feeling he felt while witnessing God is the same I get when I finally see the program I typed working.
+The very weird (or you may say interesting if you want to be more polite) theme I chose is simply my experience with coding, it is all ups and downs. You start a program, get to the first wall, hit your head against it quite a few times until you finally realize how to solve the issue or find a way to work around the problem. So it came to me one day, this is like Dante's journey through hell, purgatory and heaven, because I am pretty sure the feeling he felt while witnessing God is the same I get when I finally see the program I typed working.
 
 The way I worked on the logic behind program is simple:
-I debated wether it was easier to work on a grid with 2 different counters (grid[i][j] to be clearer) or an array with one single counter, and of course I decided to go with the array because, and quoting a south african Mortal Kombat movie "I don't want peace, I want problems, always". This made it so much easier to work with in the beginning, with the choice of the difficulty and also the creation of the actual grid, because i just had to push every newly created item inside my grid array.
+I debated whether it was easier to work on a grid with 2 different counters (grid[i][j] to be clearer) or an array with one single counter, and of course I decided to go with the array because, and quoting a south african Mortal Kombat movie "I don't want peace, I want problems, always". This made it so much easier to work with in the beginning, with the choice of the difficulty and also the creation of the actual grid, because I just had to push every newly created item inside my grid array.
+
+Achievements
 The difficulty function was simply to change the dimensions of my grid and the number of mines, and also change the background colours to follow the theme:
 
 function checkDifficulty(difficulty){
@@ -50,7 +52,7 @@ function checkDifficulty(difficulty){
   cellsMissing = gridDim - mines
 }
 
-Then to generate the grid i simply used the dimensions set by the difficulty:
+Then to generate the grid I simply used the dimensions set by the difficulty:
 
 function generateGrid(){
   document.querySelectorAll(".gridPlace").forEach(cell => cell.remove());
@@ -68,10 +70,10 @@ function generateGrid(){
   click = document.querySelectorAll(".gridPlace")
 }
 
-Of course I don't want the player to lose on the very first click, so i decided to create the mines immediatly after he clicked on the first cell, and also I don't want to generate a minefield where all the mines may end up in just one area of the grid, so I coded the program in a way so that if a mine was to be placed near another one, it cancels it and generates it somewhere else: 
+Of course I don't want the player to lose on the very first click, so i decided to create the mines immediately after he clicked on the first cell, and also I don't want to generate a minefield where all the mines may end up in just one area of the grid, so I coded the program in a way so that if a mine was to be placed near another one, it cancels it and generates it somewhere else: 
 
 function generateRandomMine(){
-  for(let j = 0; j < mines; j++){ // This is to choose the cells for the mines, it removes all adjacent mines and it (most of the times) it makes it so that the first cell clicked wont have the mine
+  for(let j = 0; j < mines; j++){ // This is to choose the cells for the mines, it removes all adjacent mines and it (most of the times) it makes it so that the first cell clicked won't have the mine
     random.push(Math.floor(Math.random()*gridDim))
     for(let i = 0 ; i < random.length - 1 ; i++){
       if(random[j] === random[i] || random[j] === random[i] - 1 || random[j] === random[i] + 1 || random[j] === random[i] - width || random[j] === random[i] + width || board[random[j]].classList.contains("clicked")){
@@ -81,7 +83,8 @@ function generateRandomMine(){
     }
   }
 
-Maybe the first big challenge was to check how many mines were all around each cell, of course controlling that the tiles i am clicking on arent near a border, and if they are only check the spots that are around that cell and not the ones on the other side of the grid, because i am working with an array so if i click on a cell at the right border the number immediatly after will bring right at the beginning of the next row, and same for the left borders checking the cells before it.
+Challenges
+Maybe the first big challenge was to check how many mines were all around each cell, of course controlling that the tiles i am clicking on aren’t near a border, and if they are only check the spots that are around that cell and not the ones on the other side of the grid, because i am working with an array so if i click on a cell at the right border the number immediately after will bring right at the beginning of the next row, and same for the left borders checking the cells before it.
 
 function mineCounter(currentTarget){
   board.forEach((cell,i) => {
@@ -139,7 +142,8 @@ function mineCounterChecker(i){
     }
   }
 
-Every click the player makes, i also have to check that it is not a condition to win or lose, so to make sure of that I created a control inside the mine counter. This function checks that you havent clicked on a mine first, and if you did reveals every mine on the grid (themed mine, so i also had to check which difficulty was being played), and also checks that the victory condition, which is met only when there are no more clickable cells on the grid, so if the only places that weren't clicked on were mines:
+Win condition
+Every click the player makes, I also have to check that it is not a condition to win or lose, so to make sure of that I created a control inside the mine counter. This function checks that you haven't clicked on a mine first, and if you did reveals every mine on the grid (themed mine, so i also had to check which difficulty was being played), and also checks that the victory condition, which is met only when there are no more clickable cells on the grid, so if the only places that weren't clicked on were mines:
 
   function finisherChecker(i){ // This function checks that the game is not over, and if it is then checks the condition met
     for(let j = 0 ; j < random.length ; j++)
@@ -176,3 +180,13 @@ Every click the player makes, i also have to check that it is not a condition to
   }
 
 And then after a finishing condition was met, wait for the player to choose a new difficulty setting to reset the grid and every other variable.
+
+Key learnings
+As my first real project developed in JavaScript, I am quite satisfied with what came out. I got a better understanding of JS functions, and I didn’t end up creating a mess, rather an actual functioning program.
+
+Bugs
+Sometimes the first mine checker doesn’t work, and makes the user lose on the first click. It shouldn’t happen, but it happens. Magic I guess, or this program was cursed.
+
+Future improvements:
+-The styling definitely needs lots of work. The numbers are hard to read with the background chosen;
+-I need to create a new function that clears all the empty cells so that it is actually a working Minesweeper.
